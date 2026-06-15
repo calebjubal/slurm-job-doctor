@@ -9,3 +9,5 @@ All notable changes to this project are documented here. The format is based on
 ### Added
 - Repo scaffold: packaging (`pyproject.toml`), license, `.gitignore`, `Makefile`,
   `src/` layout, and the development roadmap.
+- `parsers.unit_parser`: normalize Slurm memory (`16G` → 16384 MiB) and time
+  (`1-02:00:00` → 93600 s) strings, plus formatters for writing them back.
