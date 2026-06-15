@@ -28,3 +28,8 @@ All notable changes to this project are documented here. The format is based on
   diagnoses into `Recommendation`s (e.g. OOM → bump `--mem` to peak RSS × 1.5) and
   Recommended/Conservative `ResourceOption`s with success-probability and queue-impact
   labels. Honors `max_mem_gb`/`max_walltime_hours` caps.
+- `patcher` (`sbatch_patcher` + `safety`): rewrite `#SBATCH` directives in place
+  (preserving body, comments, inline notes, and order), insert missing directives, apply
+  the OpenMP fix, and emit `<name>.doctor.sbatch` — or back up to `<name>.bak` and
+  overwrite with `--apply`. Safety layer drops any edit that would shrink memory after
+  an OOM (or walltime after a timeout).
