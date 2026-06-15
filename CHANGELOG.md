@@ -6,6 +6,14 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-06-15
+
+### Fixed
+- Memory recommendations for scripts that use `--mem-per-cpu` now bump `--mem-per-cpu`
+  instead of adding a conflicting `--mem` directive (Slurm rejects having both). The
+  reported `old_value` also reflects the real `--mem-per-cpu` value rather than the
+  derived total.
+
 ## [0.1.1] - 2026-06-15
 
 ### Fixed

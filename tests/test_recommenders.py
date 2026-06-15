@@ -113,6 +113,33 @@ def test_queue_impact_offers_recommended_and_conservative_on_oom():
     assert parse_memory_mb(conservative.mem) >= parse_memory_mb(recommended.mem)
 
 
+def test_mem_per_cpu_script_targets_mem_per_cpu_on_oom():
+    job = JobRecord(
+        job_id="7",
+        state="OUT_OF_MEMORY",
+        requested_memory_mb=16384,
+        max_rss_mb=15700,
+        allocated_cpus=8,
+    )
+    script = parse_sbatch_text(
+        "#!/bin/bash\n#SBATCH --cpus-per-task=8\n#SBATCH --mem-per-cpu=2G\npython t.py\n"
+    )
+    diagnoses = diagnose(job=job, script=script)
+    recs = recommend(diagnoses, job=job, script=script)
+    # must NOT introduce a conflicting --mem; should bump --mem-per-cpu instead
+    assert directive(recs, "--mem") is None
+    mpc = directive(recs, "--mem-per-cpu")
+    assert mpc is not None
+    assert mpc.old_value == "2G"
+
+    # and the patched script must not contain both directives
+    from slurm_job_doctor.patcher.sbatch_patcher import patch_text
+
+    patched = patch_text(script, recs.items, diagnoses).patched_text
+    assert "--mem-per-cpu=" in patched
+    assert "--mem=" not in patched.replace("--mem-per-cpu=", "")
+
+
 def test_clean_job_has_no_directive_changes():
     job = JobRecord(
         job_id="6",
