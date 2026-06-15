@@ -21,3 +21,6 @@ All notable changes to this project are documented here. The format is based on
 - `diagnosis.patterns` + `parsers.log_parser` + `models.LogEvidence`: scan
   stdout/stderr for known failure signatures (CUDA/host OOM, walltime, module/conda,
   import, disk, segfault) with first-match-wins precedence and per-pattern capping.
+- `diagnosis.engine` + rule modules (oom, timeout, memory/cpu efficiency, gpu,
+  environment, state) producing severity-ranked `Diagnosis` findings; `config.DoctorConfig`
+  for safety factors and thresholds, loadable from `.doctor.yml` (adds `pyyaml`).

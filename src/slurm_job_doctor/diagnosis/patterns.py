@@ -92,6 +92,20 @@ PATTERNS: list[LogPattern] = [
         "A shell command was not found on PATH.",
     ),
     _pattern(
+        "invalid_partition",
+        "environment",
+        "high",
+        r"invalid partition|partition .* not found|requested partition.*not (?:exist|available)",
+        "The requested partition is invalid or unavailable.",
+    ),
+    _pattern(
+        "invalid_account",
+        "environment",
+        "high",
+        r"invalid account|invalid account or account/partition|invalid qos",
+        "The requested account or QOS is invalid.",
+    ),
+    _pattern(
         "disk_quota",
         "io",
         "high",
