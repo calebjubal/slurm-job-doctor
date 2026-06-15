@@ -7,8 +7,20 @@ import re
 from slurm_job_doctor.diagnosis.context import DiagnosisContext
 from slurm_job_doctor.models.diagnosis import Diagnosis
 
-_GPU_ACTIVITY_RE = re.compile(
-    r"cuda|gpu|nvidia|cudnn|nccl|device:\s*cuda|tensor core", re.IGNORECASE
+# Positive evidence that the GPU was actually used. Kept specific so that a line like
+# "no CUDA device selected, running on CPU" does NOT count as usage.
+_GPU_USED_RE = re.compile(
+    r"using device:\s*cuda"
+    r"|device\s*=\s*cuda"
+    r"|cuda:\d"
+    r"|to\(['\"]cuda"
+    r"|\.cuda\(\)"
+    r"|moved to (?:cuda|gpu)"
+    r"|nvidia-smi"
+    r"|CUDA available"
+    r"|torch\.cuda\.is_available\(\)\s*[:=]?\s*true"
+    r"|allocated[^\n]*on gpu",
+    re.IGNORECASE,
 )
 
 
@@ -28,11 +40,13 @@ def diagnose(ctx: DiagnosisContext) -> list[Diagnosis]:
     if ctx.logs.has("cuda_oom"):
         return []
 
-    # Only reason about GPU usage when we actually have logs to inspect; otherwise we
-    # cannot tell "unused" from "we just weren't given the logs".
+    # Only reason about usage when we actually have logs; otherwise we cannot tell
+    # "unused" from "we just weren't given the logs".
     if not ctx.has_logs:
         return []
-    if ctx.log_text and _GPU_ACTIVITY_RE.search(ctx.log_text):
+
+    # If the logs show concrete GPU usage, the request was justified.
+    if ctx.log_text and _GPU_USED_RE.search(ctx.log_text):
         return []
 
     return [
@@ -42,14 +56,13 @@ def diagnose(ctx: DiagnosisContext) -> list[Diagnosis]:
             severity="medium",
             title="GPU requested but possibly unused",
             message=(
-                f"The job requested {requested} GPU(s), but the logs show no CUDA/GPU "
-                "activity. If this is a CPU-only job, drop the GPU request to cut queue "
-                "time; otherwise add a GPU sanity check (e.g. nvidia-smi or "
-                "torch.cuda.is_available())."
+                f"The job requested {requested} GPU(s), but the logs show no sign of GPU "
+                "use. If this is a CPU-only job, drop the GPU request to cut queue time; "
+                "otherwise add a GPU sanity check (e.g. torch.cuda.is_available())."
             ),
             evidence=[
                 f"GPUs requested: {requested}",
-                "No CUDA/GPU activity found in the provided logs",
+                "No GPU usage found in the provided logs",
             ],
         )
     ]

@@ -1,0 +1,4 @@
+Loading checkpoint model.pt
+WARNING: no CUDA device selected, running inference on CPU backend
+Processed 10000 records
+Done in 2530s

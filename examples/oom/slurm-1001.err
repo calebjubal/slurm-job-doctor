@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "preprocess.py", line 88, in <module>
+    table = build_feature_matrix(rows)
+MemoryError
+slurmstepd: error: Detected 1 oom-kill event(s) in StepId=1001.batch cgroup. Some of your processes may have been killed by the cgroup out-of-memory handler.
+slurmstepd: error: Detected 1 oom_kill event in StepId=1001.batch

@@ -1,0 +1,4 @@
+JobID|JobName|State|ExitCode|Elapsed|Timelimit|ReqMem|MaxRSS|AllocCPUS|ReqCPUS|NTasks|NNodes|NodeList|Partition|Account|User|TotalCPU|AllocTRES
+1001|preprocess|OUT_OF_MEMORY|0:125|00:18:42|02:00:00|16G||8|8||1|node014|compute|ml|alice|02:21:36|cpu=8,mem=16G,node=1
+1001.batch|batch|OUT_OF_MEMORY|0:125|00:18:42||16G|15832M|8|8|1|1|node014||||02:21:30|cpu=8,mem=16G,node=1
+1001.extern|extern|COMPLETED|0:0|00:18:42||16G|1416K|8|8|1|1|node014||||00:00:00|

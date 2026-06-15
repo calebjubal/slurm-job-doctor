@@ -1,0 +1,3 @@
+JobID|JobName|State|ExitCode|Elapsed|Timelimit|ReqMem|MaxRSS|AllocCPUS|ReqCPUS|NTasks|NNodes|NodeList|Partition|Account|User|TotalCPU|AllocTRES
+1004|infer|COMPLETED|0:0|00:42:10|01:00:00|16G||4|4||1|gpu007|gpu|ml|alice|02:20:00|cpu=4,mem=16G,node=1,gres/gpu=1
+1004.batch|batch|COMPLETED|0:0|00:42:10||16G|9216M|4|4|1|1|gpu007||||02:19:30|cpu=4,mem=16G,node=1,gres/gpu=1

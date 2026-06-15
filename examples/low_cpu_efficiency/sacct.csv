@@ -1,0 +1,3 @@
+JobID|JobName|State|ExitCode|Elapsed|Timelimit|ReqMem|MaxRSS|AllocCPUS|ReqCPUS|NTasks|NNodes|NodeList|Partition|Account|User|TotalCPU|AllocTRES
+1003|montecarlo|COMPLETED|0:0|02:00:31|04:00:00|8G||16|16||1|node031|compute|ml|alice|01:58:00|cpu=16,mem=8G,node=1
+1003.batch|batch|COMPLETED|0:0|02:00:31||8G|2304M|16|16|1|1|node031||||01:57:48|cpu=16,mem=8G,node=1

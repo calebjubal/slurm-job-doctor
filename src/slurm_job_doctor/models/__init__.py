@@ -4,6 +4,7 @@ from slurm_job_doctor.models.diagnosis import Diagnosis
 from slurm_job_doctor.models.job_record import JobRecord
 from slurm_job_doctor.models.log_evidence import LogEvidence, LogMatch
 from slurm_job_doctor.models.recommendation import Recommendation, ResourceOption
+from slurm_job_doctor.models.report import Report
 from slurm_job_doctor.models.sbatch_script import SbatchDirective, SbatchScript
 
 __all__ = [
@@ -12,6 +13,7 @@ __all__ = [
     "LogEvidence",
     "LogMatch",
     "Recommendation",
+    "Report",
     "ResourceOption",
     "SbatchDirective",
     "SbatchScript",

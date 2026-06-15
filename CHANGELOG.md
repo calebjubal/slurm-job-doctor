@@ -6,6 +6,12 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-06-15
+
+First usable release: the rule-based doctor. Parses local `sbatch` / `sacct` / log
+files (no Slurm required), diagnoses OOM, timeout, and CPU/memory/GPU inefficiency,
+recommends fixes, and emits a patched `.doctor.sbatch`.
+
 ### Added
 - Repo scaffold: packaging (`pyproject.toml`), license, `.gitignore`, `Makefile`,
   `src/` layout, and the development roadmap.
@@ -33,3 +39,14 @@ All notable changes to this project are documented here. The format is based on
   the OpenMP fix, and emit `<name>.doctor.sbatch` — or back up to `<name>.bak` and
   overwrite with `--apply`. Safety layer drops any edit that would shrink memory after
   an OOM (or walltime after a timeout).
+- `analysis` pipeline + `collectors` (sacct/file/command runner) + `reporting`
+  (terminal/JSON/markdown) + `cli` (`analyze`, `patch`, `version`; roadmap stubs for
+  `monitor`/`collect`/`train`/`dashboard`).
+- Four runnable example jobs (`examples/oom`, `timeout`, `low_cpu_efficiency`,
+  `gpu_not_used`) and docs (`architecture`, `cli`, `diagnosis-rules`, `examples`).
+
+### Fixed
+- `sacct_parser` no longer raises on a malformed/misaligned field (e.g. a TRES string
+  landing in `TotalCPU`); unparseable values degrade to `None`.
+- GPU-usage detection no longer treats "no CUDA device" log lines as evidence the GPU
+  was used; it now looks for positive GPU-use signals only.

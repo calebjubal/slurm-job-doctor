@@ -40,6 +40,29 @@ def _to_int(value: str | None) -> int | None:
         return None
 
 
+# The unit parsers raise on junk by design; in the sacct layer we'd rather degrade to
+# None than crash the whole run on one surprising field (e.g. a misaligned column).
+def _safe_time(value: str | None) -> int | None:
+    try:
+        return parse_time_seconds(value)
+    except ValueError:
+        return None
+
+
+def _safe_mem(value: str | None) -> int | None:
+    try:
+        return parse_memory_mb(value)
+    except ValueError:
+        return None
+
+
+def _safe_reqmem(value: str | None) -> tuple[int | None, str | None]:
+    try:
+        return parse_reqmem(value)
+    except ValueError:
+        return (None, None)
+
+
 def _split_top_level(text: str) -> list[str]:
     """Split on commas that are not inside ``[...]`` (for compact nodelists)."""
     parts: list[str] = []
@@ -116,7 +139,7 @@ def _merge_group(base_id: str, rows: list[dict[str, str]]) -> JobRecord:
     alloc_cpus = _to_int(primary_get("alloccpus")) or _to_int(any_get("alloccpus"))
     req_cpus = _to_int(primary_get("reqcpus")) or _to_int(any_get("reqcpus"))
 
-    requested_mb, scope = parse_reqmem(primary_get("reqmem") or any_get("reqmem"))
+    requested_mb, scope = _safe_reqmem(primary_get("reqmem") or any_get("reqmem"))
     if requested_mb is not None:
         if scope == "cpu" and alloc_cpus:
             requested_mb *= alloc_cpus
@@ -125,13 +148,13 @@ def _merge_group(base_id: str, rows: list[dict[str, str]]) -> JobRecord:
 
     max_rss: int | None = None
     for row in ordered:
-        value = parse_memory_mb((row.get("maxrss") or "").strip() or None)
+        value = _safe_mem((row.get("maxrss") or "").strip() or None)
         if value is not None:
             max_rss = value if max_rss is None else max(max_rss, value)
 
     total_cpu: int | None = None
     for row in ordered:
-        value = parse_time_seconds((row.get("totalcpu") or "").strip() or None)
+        value = _safe_time((row.get("totalcpu") or "").strip() or None)
         if value is not None:
             total_cpu = value if total_cpu is None else max(total_cpu, value)
 
@@ -147,8 +170,8 @@ def _merge_group(base_id: str, rows: list[dict[str, str]]) -> JobRecord:
         job_name=primary_get("jobname") or None,
         state=primary_get("state"),
         exit_code=primary_get("exitcode") or None,
-        elapsed_seconds=parse_time_seconds(primary_get("elapsed") or None),
-        timelimit_seconds=parse_time_seconds(primary_get("timelimit") or None),
+        elapsed_seconds=_safe_time(primary_get("elapsed") or None),
+        timelimit_seconds=_safe_time(primary_get("timelimit") or None),
         requested_memory_mb=requested_mb,
         max_rss_mb=max_rss,
         allocated_cpus=alloc_cpus,
