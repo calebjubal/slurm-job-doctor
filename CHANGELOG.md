@@ -24,3 +24,7 @@ All notable changes to this project are documented here. The format is based on
 - `diagnosis.engine` + rule modules (oom, timeout, memory/cpu efficiency, gpu,
   environment, state) producing severity-ranked `Diagnosis` findings; `config.DoctorConfig`
   for safety factors and thresholds, loadable from `.doctor.yml` (adds `pyyaml`).
+- `recommenders` (memory, runtime, cpu, gpu) + `queue_impact` estimator turning
+  diagnoses into `Recommendation`s (e.g. OOM → bump `--mem` to peak RSS × 1.5) and
+  Recommended/Conservative `ResourceOption`s with success-probability and queue-impact
+  labels. Honors `max_mem_gb`/`max_walltime_hours` caps.
