@@ -14,3 +14,7 @@ All notable changes to this project are documented here. The format is based on
 - `models.SbatchScript` + `parsers.sbatch_parser`: extract `#SBATCH` directives
   (long and short forms) while preserving comments, blank lines, body, and order;
   derive GPU count from `--gres`/`--gpus`.
+- `models.JobRecord` + `parsers.sacct_parser`: parse `--parsable2`/CSV `sacct`
+  output, merging a job's allocation, `.batch`, and step rows into one record;
+  scale per-cpu/per-node `ReqMem`, expand compact nodelists, derive CPU efficiency,
+  memory utilization, and GPU count from TRES.
