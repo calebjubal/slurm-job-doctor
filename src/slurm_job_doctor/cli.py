@@ -48,6 +48,23 @@ def _require_some_input(job_id, sbatch, sacct, stdout, stderr) -> None:
         raise typer.Exit(code=2)
 
 
+def _build_report(*, job_id, sbatch, sacct, stdout, stderr, config) -> Report:
+    """Run the pipeline, turning collector failures into a clean CLI error."""
+    try:
+        return analyze_inputs(
+            job_id=job_id,
+            sbatch=sbatch,
+            sacct=sacct,
+            stdout=stdout,
+            stderr=stderr,
+            config_path=config,
+            sacct_runner=sacct_collector.collect,
+        )
+    except RuntimeError as exc:
+        typer.secho(f"Error: {exc}", fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1) from exc
+
+
 @app.command()
 def analyze(
     job_id: str = typer.Option(None, "--job-id", help="Completed job id (uses sacct)."),
@@ -61,14 +78,13 @@ def analyze(
 ) -> None:
     """Analyze a completed job and recommend fixes."""
     _require_some_input(job_id, sbatch, sacct, stdout, stderr)
-    report = analyze_inputs(
+    report = _build_report(
         job_id=job_id,
         sbatch=sbatch,
         sacct=sacct,
         stdout=stdout,
         stderr=stderr,
-        config_path=config,
-        sacct_runner=sacct_collector.collect,
+        config=config,
     )
 
     if do_patch and sbatch is not None and report.directive_recommendations:
@@ -91,14 +107,13 @@ def patch(
     apply: bool = typer.Option(False, "--apply", help="Overwrite in place (backs up to .bak)."),
 ) -> None:
     """Generate a patched sbatch script from a job's diagnosis."""
-    report = analyze_inputs(
+    report = _build_report(
         job_id=job_id,
         sbatch=sbatch,
         sacct=sacct,
         stdout=stdout,
         stderr=stderr,
-        config_path=config,
-        sacct_runner=sacct_collector.collect,
+        config=config,
     )
     if not report.directive_recommendations:
         console.print("[green]No directive changes recommended — script left as is.[/]")

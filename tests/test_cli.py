@@ -70,3 +70,14 @@ def test_version_command():
 def test_monitor_is_roadmap_stub():
     result = runner.invoke(app, ["monitor", "--job-id", "1"])
     assert result.exit_code == 1
+
+
+def test_analyze_job_id_without_slurm_is_friendly(monkeypatch):
+    def boom(job_id):
+        raise RuntimeError(f"sacct failed for job {job_id}: command not found")
+
+    monkeypatch.setattr("slurm_job_doctor.cli.sacct_collector.collect", boom)
+    result = runner.invoke(app, ["analyze", "--job-id", "999"])
+    assert result.exit_code == 1
+    assert result.exception is None or isinstance(result.exception, SystemExit)
+    assert "sacct failed" in result.output

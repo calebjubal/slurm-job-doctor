@@ -6,6 +6,13 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-06-15
+
+### Fixed
+- `analyze --job-id` / `patch --job-id` on a host without Slurm now print a clean
+  `Error: sacct failed ...` message and exit 1, instead of dumping a traceback when the
+  `sacct` collector fails.
+
 ## [0.1.0] - 2026-06-15
 
 First usable release: the rule-based doctor. Parses local `sbatch` / `sacct` / log
