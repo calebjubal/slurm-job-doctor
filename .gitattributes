@@ -1,0 +1,11 @@
+# Normalize line endings: store text as LF in the repo.
+* text=auto eol=lf
+
+# Shell and Slurm batch scripts must stay LF even on Windows checkouts.
+*.sh text eol=lf
+*.sbatch text eol=lf
+
+# Treat these as binary (no EOL conversion / no diff).
+*.pkl binary
+*.joblib binary
+*.png binary
