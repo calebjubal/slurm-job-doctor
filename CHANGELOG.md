@@ -18,3 +18,6 @@ All notable changes to this project are documented here. The format is based on
   output, merging a job's allocation, `.batch`, and step rows into one record;
   scale per-cpu/per-node `ReqMem`, expand compact nodelists, derive CPU efficiency,
   memory utilization, and GPU count from TRES.
+- `diagnosis.patterns` + `parsers.log_parser` + `models.LogEvidence`: scan
+  stdout/stderr for known failure signatures (CUDA/host OOM, walltime, module/conda,
+  import, disk, segfault) with first-match-wins precedence and per-pattern capping.
