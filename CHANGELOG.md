@@ -11,3 +11,6 @@ All notable changes to this project are documented here. The format is based on
   `src/` layout, and the development roadmap.
 - `parsers.unit_parser`: normalize Slurm memory (`16G` → 16384 MiB) and time
   (`1-02:00:00` → 93600 s) strings, plus formatters for writing them back.
+- `models.SbatchScript` + `parsers.sbatch_parser`: extract `#SBATCH` directives
+  (long and short forms) while preserving comments, blank lines, body, and order;
+  derive GPU count from `--gres`/`--gpus`.
